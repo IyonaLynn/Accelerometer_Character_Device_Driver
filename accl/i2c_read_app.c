@@ -14,13 +14,13 @@
 #define BMA400_PWR_MODE_SLEEP  0x00
 #define BMA400_PWR_MODE_NORMAL 0x02
 #define BMA400_ACC_CONFIG0     0x7C
+#define BMA400_ACC_CONFIG1     0x7B
 #define BMA400_ODR_12_5HZ      0x06
+#define BMA400_ACC_RANGE_2G    0x00
 #define BMA400_CHIP_ID_REG     0x00
 #define BMA400_EXPECTED_CHIP_ID 0x90
 
 #define BMA400_ACC_X_LSB  0x04
-#define BMA400_ACC_Y_LSB  0x06
-#define BMA400_ACC_Z_LSB  0x08
 
 int16_t convert_accel_data(uint8_t lsb, uint8_t msb) {
     int16_t raw = ((int16_t)msb << 8) | lsb;
@@ -52,47 +52,35 @@ int main() {
 
     // Verify CHIP ID
     uint8_t chip_id_reg = BMA400_CHIP_ID_REG;
-    if (write(i2c_fd, &chip_id_reg, 1) == 1) {
-        uint8_t chip_id;
-        if (read(i2c_fd, &chip_id, 1) == 1) {
-            printf("[DEBUG] BMA400 CHIP ID = 0x%02X\n", chip_id);
-            if (chip_id != BMA400_EXPECTED_CHIP_ID)
-                printf("[WARN] Unexpected CHIP ID! Check sensor or address\n");
-        } else {
-            perror("[WARN] Failed to read CHIP ID");
+    write(i2c_fd, &chip_id_reg, 1);
+    uint8_t chip_id;
+    read(i2c_fd, &chip_id, 1);
+    printf("[DEBUG] BMA400 CHIP ID = 0x%02X\n", chip_id);
+
+    if (chip_id != BMA400_EXPECTED_CHIP_ID) {
+        printf("[WARN] Unexpected CHIP ID! Check sensor or address\n");
+        close(i2c_fd);
+        return 1;
+    }
+
+    // Sensor initialization
+    uint8_t init_seq[][2] = {
+        {BMA400_PWR_CTRL, BMA400_PWR_MODE_SLEEP},
+        {BMA400_ACC_CONFIG1, BMA400_ACC_RANGE_2G},
+        {BMA400_PWR_CTRL, BMA400_PWR_MODE_NORMAL},
+        {BMA400_ACC_CONFIG0, BMA400_ODR_12_5HZ}
+    };
+
+    for (int i = 0; i < 4; i++) {
+        if (write(i2c_fd, init_seq[i], 2) != 2) {
+            perror("[ERROR] Sensor initialization failed");
+            close(i2c_fd);
+            return 1;
         }
+        usleep(200000);
     }
 
-    // Step 1: Set to SLEEP mode
-    uint8_t sleep_mode[2] = {BMA400_PWR_CTRL, BMA400_PWR_MODE_SLEEP};
-    if (write(i2c_fd, sleep_mode, 2) != 2) {
-        perror("[ERROR] Failed to set SLEEP mode");
-        close(i2c_fd);
-        return 1;
-    }
-    printf("[INFO] BMA400 set to SLEEP mode\n");
-    usleep(100000);
-
-    // Step 2: Set to NORMAL mode
-    uint8_t normal_mode[2] = {BMA400_PWR_CTRL, BMA400_PWR_MODE_NORMAL};
-    if (write(i2c_fd, normal_mode, 2) != 2) {
-        perror("[ERROR] Failed to set NORMAL mode");
-        close(i2c_fd);
-        return 1;
-    }
-    printf("[INFO] BMA400 set to NORMAL mode\n");
-    usleep(100000);
-
-    // Step 3: Set ODR = 12.5Hz
-    uint8_t odr_config[2] = {BMA400_ACC_CONFIG0, BMA400_ODR_12_5HZ};
-    if (write(i2c_fd, odr_config, 2) != 2) {
-        perror("[ERROR] Failed to write ACC_CONFIG0 (ODR)");
-    } else {
-        printf("[INFO] Set ODR to 12.5Hz in ACC_CONFIG0\n");
-    }
-    usleep(100000);
-
-    // Step 4: Read XYZ acceleration values
+    //Read XYZ acceleration values
     uint8_t start_reg = BMA400_ACC_X_LSB;
     if (write(i2c_fd, &start_reg, 1) != 1) {
         perror("[ERROR] Failed to set register pointer to XYZ");
