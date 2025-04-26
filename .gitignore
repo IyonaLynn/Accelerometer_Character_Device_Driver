@@ -1,2 +1,3 @@
-i2c_read_app
-gpio
+lsm9ds1_test
+gpio_test
+accel_gui
