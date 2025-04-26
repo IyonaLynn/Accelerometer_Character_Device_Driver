@@ -1,11 +1,11 @@
 CC      ?= $(CROSS_COMPILE)gcc
 CFLAGS  ?= -g -Wall -Werror
-TARGET  ?= i2c_read_app
+TARGET  ?= lsm9ds1_test
 
 all: $(TARGET)
 
 # Build the i2c_read_app binary
-$(TARGET): i2c_read_app.c
+$(TARGET): lsm9ds1_test.c
 	$(CC) $(CFLAGS) $^ -o $@ $(INCLUDES) $(LDFLAGS)
 
 # Clean target

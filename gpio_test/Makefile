@@ -4,7 +4,7 @@ LDLIBS = -lgpiod
 
 all: gpio
 
-gpio: gpio.c
+gpio: gpio_test.c
 
 clean:
 	rm -f gpio
