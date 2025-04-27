@@ -2,10 +2,10 @@ CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall
 LDLIBS = -lgpiod
 
-all: gpio
+all: gpio_test
 
-gpio: gpio_test.c
+gpio_test: gpio_test.c
 
 clean:
-	rm -f gpio
+	rm -f gpio_test
 
