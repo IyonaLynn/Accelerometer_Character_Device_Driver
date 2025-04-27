@@ -1,16 +1,16 @@
 # Makefile for Accelerometer GUI Application
 
 # Compiler and flags
-CC = gcc
-CFLAGS = -Wall -Wextra -g `pkg-config --cflags gtk+-3.0`
-LDFLAGS = `pkg-config --libs gtk+-3.0` -lgpiod -lm
+CC ?= $(CROSS_COMPILE)gcc
+CFLAGS = -Wall -Wextra -g $(shell pkg-config --cflags gtk+-3.0)
+LDFLAGS = $(shell pkg-config --libs gtk+-3.0) -lgpiod -lm
 
 # Source files
 SRC = accel_gui.c
 OBJ = $(SRC:.c=.o)
 TARGET = accel_gui
 
-# Installation directories (if needed)
+# Installation directories
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 
@@ -36,7 +36,7 @@ uninstall:
 clean:
 	rm -f $(OBJ) $(TARGET)
 
-# Run the application (for testing)
+# Run the application
 run: $(TARGET)
 	./$(TARGET)
 
