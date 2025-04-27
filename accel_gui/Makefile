@@ -2,17 +2,15 @@
 
 # Compiler and flags
 CC ?= $(CROSS_COMPILE)gcc
-CFLAGS = -Wall -Wextra -g $(shell pkg-config --cflags gtk+-3.0)
-LDFLAGS = $(shell pkg-config --libs gtk+-3.0) -lgpiod -lm
+PKG_CONFIG ?= pkg-config
+
+CFLAGS += -Wall -Wextra -g $(shell $(PKG_CONFIG) --cflags gtk+-3.0)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-3.0) -lgpiod -lm
 
 # Source files
 SRC = accel_gui.c
 OBJ = $(SRC:.c=.o)
 TARGET = accel_gui
-
-# Installation directories
-PREFIX = /usr/local
-BINDIR = $(PREFIX)/bin
 
 # Default target
 all: $(TARGET)
@@ -25,12 +23,12 @@ $(TARGET): $(OBJ)
 
 # Install the application
 install: $(TARGET)
-	install -d $(BINDIR)
-	install -m 755 $(TARGET) $(BINDIR)
+	install -d $(DESTDIR)$(PREFIX)/bin
+	install -m 755 $(TARGET) $(DESTDIR)$(PREFIX)/bin
 
 # Uninstall the application
 uninstall:
-	rm -f $(BINDIR)/$(TARGET)
+	rm -f $(PREFIX)/bin/$(TARGET)
 
 # Clean up
 clean:
@@ -40,8 +38,5 @@ clean:
 run: $(TARGET)
 	./$(TARGET)
 
-# Dependencies (GTK3 and libgpiod)
-deps:
-	sudo apt-get install libgtk-3-dev libgpiod-dev
+.PHONY: all clean install uninstall run
 
-.PHONY: all clean install uninstall run deps
