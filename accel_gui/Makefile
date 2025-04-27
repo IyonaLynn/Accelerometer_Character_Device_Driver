@@ -4,8 +4,8 @@
 CC ?= $(CROSS_COMPILE)gcc
 PKG_CONFIG ?= pkg-config
 
-CFLAGS += -Wall -Wextra -g $(shell $(PKG_CONFIG) --cflags gtk+-3.0)
-LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-3.0) -lgpiod -lm
+CFLAGS ?= -Wall -Wextra -g $(shell $(PKG_CONFIG) --cflags gtk+-3.0)
+LDFLAGS ?= $(shell $(PKG_CONFIG) --libs gtk+-3.0) -lgpiod -lm
 
 # Source files
 SRC = accel_gui.c
@@ -28,7 +28,7 @@ install: $(TARGET)
 
 # Uninstall the application
 uninstall:
-	rm -f $(PREFIX)/bin/$(TARGET)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(TARGET)
 
 # Clean up
 clean:
