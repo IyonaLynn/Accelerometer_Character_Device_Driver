@@ -1,3 +1,9 @@
+/* Test code to get working of I2C Sensor
+** LS9DS1 Datasheet
+** Linux I2C Reference: https://www.youtube.com/watch?v=znaxhjvDS-Y
+** Code reference: https://docs.kernel.org/i2c/dev-interface.html
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
