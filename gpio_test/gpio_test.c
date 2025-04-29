@@ -1,3 +1,8 @@
+/* Test code to get working of input and output gpio
+** Setup Reference: https://www.youtube.com/watch?v=D6bhLTP_mNI
+** Code reference: https://www.ics.com/blog/gpio-programming-exploring-libgpiod-library
+** https://stackoverflow.com/questions/77222869/how-to-gracefully-cancel-gpiod-line-event-wait
+*/
 #include <gpiod.h>
 #include <stdio.h>
 #include <unistd.h>
