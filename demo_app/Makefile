@@ -1,7 +1,7 @@
 # Allow Buildroot to override CC/CFLAGS on the command line.
 CC     ?= gcc
 CFLAGS ?= -Wall -O2
-TARGET ?= accel_app
+TARGET ?= demo_app
 SRCS   := demo_app.c
 
 .PHONY: all clean
