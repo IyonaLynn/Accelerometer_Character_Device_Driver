@@ -53,7 +53,7 @@ static unsigned int          write_pos;
 static bool                  sampling_enabled = true;
 static int                   threshold = 5000;
 static int                   btn_irq;
-static DEFINE_MUTEX          buf_lock;
+DEFINE_MUTEX(buf_lock);
 
 /* Button IRQ toggles sampling */
 static irqreturn_t button_irq_handler(int irq, void *dev_id)
