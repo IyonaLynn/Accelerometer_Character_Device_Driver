@@ -258,12 +258,11 @@ err_page:
     return ret;
 }
 
-static int accel_remove(struct i2c_client *client)
+static void accel_remove(struct i2c_client *client)
 {
     misc_deregister(&accel_misc_device);
     __free_page(buffer_page);
     dev_info(&client->dev, "accel driver unloaded\n");
-    return 0;
 }
 
 static const struct i2c_device_id accel_id[] = {
