@@ -2,9 +2,8 @@
 KDIR   ?= $(LINUX_DIR)
 PWD    := $(shell pwd)
 
-# Build lsm9ds1_accel.ko from char_driver.o
-obj-m  := lsm9ds1_accel.o
-lsm9ds1_accel-objs := char_driver.o
+# Build char_driver.ko from char_driver.o
+obj-m  := char_driver.o
 
 .PHONY: all clean
 
